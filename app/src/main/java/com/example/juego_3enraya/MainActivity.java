@@ -1,19 +1,24 @@
 package com.example.juego_3enraya;
 
+import static com.example.juego_3enraya.Model.DefaultConstants.CONNECTION_FALSE;
+import static com.example.juego_3enraya.Model.DefaultConstants.CONNECTION_TRUE;
+
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.lang.reflect.Array;
-
 public class MainActivity extends AppCompatActivity {
     //Attributes
     private static final int SERVERPORT = 5000;
     private static final String ADDRESS = "192.168.1.121";
+    TextView txtResult;
+
 
     Button btnStart, btnConnec;
 
@@ -22,6 +27,14 @@ public class MainActivity extends AppCompatActivity {
     //Methods
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        View decorView = getWindow().getDecorView();
+        // Hide the status bar.
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.hide();
+
         //Build an array with 9 buttons in horizontal order
         Button[][] buttons = new Button[3][3];
         buttons[0][0] = findViewById(R.id.button1);
@@ -35,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
         buttons[2][2] = findViewById(R.id.button9);
         //The buttons are not enable
         for (int i = 0; i < buttons.length ; i++) {
-            for (int u = 0; i < buttons[i].length; i++){
+            for (int u = 0; u < buttons[i].length; u++){
                 buttons[i][u].setEnabled(false);
             }
         }
@@ -57,23 +70,23 @@ public class MainActivity extends AppCompatActivity {
                         int port = Integer.parseInt(txtPort.getText().toString());
                         if (!ip.equals("") && port!=0){
                             ThreadConnection conn = new ThreadConnection(ip, port, instance);
+                            Log.i("Hola","Funciona");
+                            conn.execute();
 
                         }else {
                             Toast.makeText(getApplicationContext(), "Ip o port", Toast.LENGTH_LONG).show();
                         }
                     }
                 });
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
     }
 
     public void updateUI(byte header){
         switch (header){
-            case CONNECTION_OK:
+            case CONNECTION_TRUE:
                 txtResult.setText("CONNETED OK");
                 btnStart.setEnabled(true);
                 break;
-            case CONNECTION_KO:
+            case CONNECTION_FALSE:
                 txtResult.setText("CONNECTED KO");
                 break;
         }
