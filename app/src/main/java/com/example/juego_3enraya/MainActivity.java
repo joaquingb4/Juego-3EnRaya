@@ -20,7 +20,8 @@ public class MainActivity extends AppCompatActivity {
     TextView txtResult;
 
 
-    Button btnStart, btnConnec;
+    Button btnStart;
+    Button btnConnec;
 
     MainActivity instance;
 
@@ -57,13 +58,15 @@ public class MainActivity extends AppCompatActivity {
 
 
         //Build menu buttons
-        Button btnCon = findViewById(R.id.btnConnec);
-        Button btnStart = findViewById(R.id.btnStart);
+         btnConnec = findViewById(R.id.btnConnec);
+         btnStart = findViewById(R.id.btnStart);
         //Build menu textView
         TextView txtIp = findViewById(R.id.txtIp);
         TextView txtPort = findViewById(R.id.txtPort);
+        //TxtResult
+        txtResult = findViewById(R.id.txtResult);
 
-        btnCon.setOnClickListener(
+        btnConnec.setOnClickListener(
                 new View.OnClickListener() {
                     public void onClick(View view) {
                         String ip = txtIp.getText().toString();

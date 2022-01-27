@@ -64,7 +64,6 @@ public class ThreadConnection extends AsyncTask<Void, Void, Boolean> {
         }
     }
 
-
     @Override
     protected void onPostExecute(Boolean resposta){
         progressDialog.dismiss();
@@ -74,5 +73,6 @@ public class ThreadConnection extends AsyncTask<Void, Void, Boolean> {
         }else{
             instance.updateUI(CONNECTION_TRUE);
         }
+
     }
 }
