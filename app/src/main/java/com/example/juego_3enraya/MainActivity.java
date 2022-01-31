@@ -2,6 +2,7 @@ package com.example.juego_3enraya;
 
 import static com.example.juego_3enraya.Model.DefaultConstants.CONNECTION_FALSE;
 import static com.example.juego_3enraya.Model.DefaultConstants.CONNECTION_TRUE;
+import static com.example.juego_3enraya.Model.DefaultConstants.START_GAME;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -17,6 +18,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
+import java.net.InetAddress;
 import java.net.Socket;
 
 public class MainActivity extends AppCompatActivity {
@@ -30,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
     TextView txtResult;
     Button btnStart;
     Button btnConnec;
+    Button[][] buttons;
 
     MainActivity instance;
 
@@ -45,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
         actionBar.hide();
 
         //Build an array with 9 buttons in horizontal order
-        Button[][] buttons = new Button[3][3];
+        buttons = new Button[3][3];
         buttons[0][0] = findViewById(R.id.button1);
         buttons[0][1] = findViewById(R.id.button2);
         buttons[0][2] = findViewById(R.id.button3);
@@ -110,30 +113,24 @@ public class MainActivity extends AppCompatActivity {
             case CONNECTION_FALSE:
                 txtResult.setText("CONNECTED KO");
                 break;
+            case START_GAME:
+                activarBotones();
+                break;
+        }
+    }
+    public void activarBotones(){
+        for (int i = 0; i < buttons.length ; i++) {
+            for (int u = 0; u < buttons[i].length ; u++) {
+                buttons[i][u].setEnabled(true);
+            }
         }
     }
 
     public void iniciarPartida(){
         String ip = txtIp.getText().toString();
         int port = Integer.valueOf(txtPort.getText().toString());
-        Socket socket = null;
-        try {
-            socket = new Socket(ip,port);
-            //Para leer lo que envie el servidor
-            BufferedReader input = new BufferedReader( new InputStreamReader(socket.getInputStream()));
-            //para imprimir datos del servidor
-            PrintStream output = new PrintStream(socket.getOutputStream());
-            //Para leer lo que escriba el usuario
-            BufferedReader brRequest = new BufferedReader(new InputStreamReader(System.in));
-            //System.out.println("Cliente> Escriba comando");
-            //captura comando escrito por el usuario
-            byte request = 0x01;
-            //manda peticion al servidor
-            output.println(request);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
+        ThreadStartGame start = new ThreadStartGame(ip, port, instance);
+        start.execute();
     }
 
 

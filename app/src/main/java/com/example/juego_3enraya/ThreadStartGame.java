@@ -8,15 +8,12 @@ import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintStream;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
-public class ThreadConnection extends AsyncTask<Void, Void, Boolean> {
+public class ThreadStartGame extends AsyncTask<Void, Void, Boolean> {
 
     String ip;
     int port;
@@ -24,7 +21,7 @@ public class ThreadConnection extends AsyncTask<Void, Void, Boolean> {
 
     MainActivity instance;
 
-    public ThreadConnection(String ip, int port, MainActivity instance){
+    public ThreadStartGame(String ip, int port, MainActivity instance){
         this.ip = ip;
         this.port = port;
         this.instance = instance;
@@ -57,10 +54,6 @@ public class ThreadConnection extends AsyncTask<Void, Void, Boolean> {
             Log.i("I/TCP Client", ip+ " "+" Connecting...");
             socket = new Socket(serverAddr, port);
             Log.i("I/TCP Client", "Connected to server");
-            BufferedReader input = new BufferedReader( new InputStreamReader(socket.getInputStream()));
-            //para imprimir datos del servidor
-            PrintStream output = new PrintStream(socket.getOutputStream());
-            output.println(ip);
             return true;
         }catch (UnknownHostException ex) {
             Log.e("E/TCP Client", "" + ex.getMessage());
@@ -76,7 +69,7 @@ public class ThreadConnection extends AsyncTask<Void, Void, Boolean> {
         progressDialog.dismiss();
         Log.i("final","Estoy esperando aquí " + resposta);
         if(resposta == true){
-            instance.updateUI(CONNECTION_TRUE);
+            instance.updateUI(START_GAME);
         }else{
             instance.updateUI(CONNECTION_FALSE);
         }

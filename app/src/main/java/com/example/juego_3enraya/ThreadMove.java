@@ -16,7 +16,7 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
-public class ThreadConnection extends AsyncTask<Void, Void, Boolean> {
+public class ThreadMove extends AsyncTask<Void, Void, Boolean> {
 
     String ip;
     int port;
@@ -24,7 +24,7 @@ public class ThreadConnection extends AsyncTask<Void, Void, Boolean> {
 
     MainActivity instance;
 
-    public ThreadConnection(String ip, int port, MainActivity instance){
+    public ThreadMove(String ip, int port, MainActivity instance){
         this.ip = ip;
         this.port = port;
         this.instance = instance;
@@ -52,7 +52,6 @@ public class ThreadConnection extends AsyncTask<Void, Void, Boolean> {
     protected Boolean doInBackground(Void... params) {
 
         try {
-            //Se conecta al servidor
             InetAddress serverAddr = InetAddress.getByName(ip);
             Log.i("I/TCP Client", ip+ " "+" Connecting...");
             socket = new Socket(serverAddr, port);
@@ -60,7 +59,7 @@ public class ThreadConnection extends AsyncTask<Void, Void, Boolean> {
             BufferedReader input = new BufferedReader( new InputStreamReader(socket.getInputStream()));
             //para imprimir datos del servidor
             PrintStream output = new PrintStream(socket.getOutputStream());
-            output.println(ip);
+            output.println(new Byte(0));//<-----Estoy aquí
             return true;
         }catch (UnknownHostException ex) {
             Log.e("E/TCP Client", "" + ex.getMessage());
@@ -76,7 +75,7 @@ public class ThreadConnection extends AsyncTask<Void, Void, Boolean> {
         progressDialog.dismiss();
         Log.i("final","Estoy esperando aquí " + resposta);
         if(resposta == true){
-            instance.updateUI(CONNECTION_TRUE);
+            instance.updateUI(START_GAME);
         }else{
             instance.updateUI(CONNECTION_FALSE);
         }
