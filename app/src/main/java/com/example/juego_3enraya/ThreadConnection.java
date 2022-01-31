@@ -50,7 +50,7 @@ public class ThreadConnection extends AsyncTask<Void, Void, Boolean> {
         try {
             //Se conecta al servidor
             InetAddress serverAddr = InetAddress.getByName(ip);
-            Log.i("I/TCP Client", "Connecting...");
+            Log.i("I/TCP Client", ip+ " "+" Connecting...");
             socket = new Socket(serverAddr, port);
             Log.i("I/TCP Client", "Connected to server");
 
@@ -67,11 +67,11 @@ public class ThreadConnection extends AsyncTask<Void, Void, Boolean> {
     @Override
     protected void onPostExecute(Boolean resposta){
         progressDialog.dismiss();
-
+        Log.i("final","Estoy esperando aquí" + resposta);
         if(resposta == true){
-            instance.updateUI(CONNECTION_FALSE);
-        }else{
             instance.updateUI(CONNECTION_TRUE);
+        }else{
+            instance.updateUI(CONNECTION_FALSE);
         }
 
     }

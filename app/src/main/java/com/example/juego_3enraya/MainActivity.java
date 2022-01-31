@@ -13,13 +13,21 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintStream;
+import java.net.Socket;
+
 public class MainActivity extends AppCompatActivity {
     //Attributes
-    private static final int SERVERPORT = 5000;
-    private static final String ADDRESS = "192.168.1.121";
+    private String ip ;
+    private String port;
+
+    TextView txtIp;
+    TextView txtPort;
+
     TextView txtResult;
-
-
     Button btnStart;
     Button btnConnec;
 
@@ -59,10 +67,20 @@ public class MainActivity extends AppCompatActivity {
 
         //Build menu buttons
          btnConnec = findViewById(R.id.btnConnec);
+
          btnStart = findViewById(R.id.btnStart);
+         btnStart.setEnabled(false);
+         btnStart.setOnClickListener(
+                 new View.OnClickListener() {
+                     @Override
+                     public void onClick(View view) {
+                        iniciarPartida();
+                     }
+                 }
+         );
         //Build menu textView
-        TextView txtIp = findViewById(R.id.txtIp);
-        TextView txtPort = findViewById(R.id.txtPort);
+        txtIp = findViewById(R.id.txtIp);
+        txtPort = findViewById(R.id.txtPort);
         //TxtResult
         txtResult = findViewById(R.id.txtResult);
 
@@ -70,12 +88,12 @@ public class MainActivity extends AppCompatActivity {
                 new View.OnClickListener() {
                     public void onClick(View view) {
                         String ip = txtIp.getText().toString();
-                        int port = Integer.parseInt(txtPort.getText().toString());
+                        int port = Integer.valueOf(txtPort.getText().toString());
+
                         if (!ip.equals("") && port!=0){
                             ThreadConnection conn = new ThreadConnection(ip, port, instance);
                             Log.i("Hola","Funciona");
                             conn.execute();
-
                         }else {
                             Toast.makeText(getApplicationContext(), "Ip o port", Toast.LENGTH_LONG).show();
                         }
@@ -95,7 +113,34 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public void iniciarPartida(){
+        String ip = txtIp.getText().toString();
+        int port = Integer.valueOf(txtPort.getText().toString());
+        Socket socket = null;
+        try {
+            socket = new Socket(ip,port);
+            //Para leer lo que envie el servidor
+            BufferedReader input = new BufferedReader( new InputStreamReader(socket.getInputStream()));
+            //para imprimir datos del servidor
+            PrintStream output = new PrintStream(socket.getOutputStream());
+            //Para leer lo que escriba el usuario
+            BufferedReader brRequest = new BufferedReader(new InputStreamReader(System.in));
+            //System.out.println("Cliente> Escriba comando");
+            //captura comando escrito por el usuario
+            byte request = 0x01;
+            //manda peticion al servidor
+            output.println(request);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+
+   public void getClickPosition(View view){
+        String tag = view.getTag().toString();
+
+   }
+
 
 }
-
-
