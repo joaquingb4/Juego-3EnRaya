@@ -3,6 +3,7 @@ package com.example.juego_3enraya;
 import static com.example.juego_3enraya.Model.DefaultConstants.CONNECTION_FALSE;
 import static com.example.juego_3enraya.Model.DefaultConstants.CONNECTION_TRUE;
 import static com.example.juego_3enraya.Model.DefaultConstants.START_GAME;
+import static com.example.juego_3enraya.model.DefaultConstants.MOVE;
 
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
@@ -59,7 +60,7 @@ public class ThreadMove extends AsyncTask<Void, Void, Boolean> {
             BufferedReader input = new BufferedReader( new InputStreamReader(socket.getInputStream()));
             //para imprimir datos del servidor
             PrintStream output = new PrintStream(socket.getOutputStream());
-            output.println(new Byte(0));//<-----Estoy aquí
+            output.println(0x02);//<-----Estoy aquí
             return true;
         }catch (UnknownHostException ex) {
             Log.e("E/TCP Client", "" + ex.getMessage());
@@ -73,9 +74,9 @@ public class ThreadMove extends AsyncTask<Void, Void, Boolean> {
     @Override
     protected void onPostExecute(Boolean resposta){
         progressDialog.dismiss();
-        Log.i("final","Estoy esperando aquí " + resposta);
+        Log.i("final","Estoy esperando aquí Move " + resposta);
         if(resposta == true){
-            instance.updateUI(START_GAME);
+            instance.updateUI(MOVE);
         }else{
             instance.updateUI(CONNECTION_FALSE);
         }

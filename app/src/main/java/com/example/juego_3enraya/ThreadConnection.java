@@ -10,7 +10,9 @@ import android.util.Log;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.PrintStream;
 import java.net.InetAddress;
 import java.net.Socket;
@@ -54,13 +56,17 @@ public class ThreadConnection extends AsyncTask<Void, Void, Boolean> {
         try {
             //Se conecta al servidor
             InetAddress serverAddr = InetAddress.getByName(ip);
-            Log.i("I/TCP Client", ip+ " "+" Connecting...");
+            Log.i("I/TCP Client", ip+ " "+" Connecting... to " + ip);
             socket = new Socket(serverAddr, port);
             Log.i("I/TCP Client", "Connected to server");
-            BufferedReader input = new BufferedReader( new InputStreamReader(socket.getInputStream()));
+            InputStream input = socket.getInputStream();
+            OutputStream output = socket.getOutputStream();
+            //BufferedReader input = new BufferedReader( new InputStreamReader(socket.getInputStream()));
             //para imprimir datos del servidor
-            PrintStream output = new PrintStream(socket.getOutputStream());
-            output.println(ip);
+            //PrintStream output = new PrintStream(socket.getOutputStream());
+            byte[] array = {Byte.parseByte(ip)};
+            output.write(array.length);
+            output.write(array);
             return true;
         }catch (UnknownHostException ex) {
             Log.e("E/TCP Client", "" + ex.getMessage());
@@ -74,7 +80,7 @@ public class ThreadConnection extends AsyncTask<Void, Void, Boolean> {
     @Override
     protected void onPostExecute(Boolean resposta){
         progressDialog.dismiss();
-        Log.i("final","Estoy esperando aquí " + resposta);
+        Log.i("final","Estoy esperando aquí conn " + resposta);
         if(resposta == true){
             instance.updateUI(CONNECTION_TRUE);
         }else{

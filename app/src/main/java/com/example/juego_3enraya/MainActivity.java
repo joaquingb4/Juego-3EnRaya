@@ -2,6 +2,7 @@ package com.example.juego_3enraya;
 
 import static com.example.juego_3enraya.Model.DefaultConstants.CONNECTION_FALSE;
 import static com.example.juego_3enraya.Model.DefaultConstants.CONNECTION_TRUE;
+import static com.example.juego_3enraya.Model.DefaultConstants.MOVE;
 import static com.example.juego_3enraya.Model.DefaultConstants.START_GAME;
 
 import androidx.appcompat.app.ActionBar;
@@ -14,20 +15,11 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintStream;
-import java.net.InetAddress;
-import java.net.Socket;
-
 public class MainActivity extends AppCompatActivity {
     //Attributes
-    private String ip ;
-    private String port;
-
     TextView txtIp;
     TextView txtPort;
+    TextView txtTurn;
 
     TextView txtResult;
     Button btnStart;
@@ -35,9 +27,17 @@ public class MainActivity extends AppCompatActivity {
     Button[][] buttons;
 
     MainActivity instance;
+    Boolean turn = false;
 
     //Methods
-    @Override
+    public Boolean geTurn(){
+        return turn;
+    }
+
+    public void setTurn(Boolean turn) {
+        this.turn = turn;
+    }
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -71,6 +71,8 @@ public class MainActivity extends AppCompatActivity {
         //Build menu buttons
          btnConnec = findViewById(R.id.btnConnec);
 
+         txtTurn = findViewById(R.id.txtTurn);
+
          btnStart = findViewById(R.id.btnStart);
          btnStart.setEnabled(false);
          btnStart.setOnClickListener(
@@ -95,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
 
                         if (!ip.equals("") && port!=0){
                             ThreadConnection conn = new ThreadConnection(ip, port, instance);
-                            Log.i("Hola","Funciona");
+                            Log.i("Hola","Funciona " +ip );
                             conn.execute();
                         }else {
                             Toast.makeText(getApplicationContext(), "Ip o port", Toast.LENGTH_LONG).show();
@@ -114,14 +116,26 @@ public class MainActivity extends AppCompatActivity {
                 txtResult.setText("CONNECTED KO");
                 break;
             case START_GAME:
-                activarBotones();
+                txtTurn.setText(turn.toString());
+                initGame();
                 break;
+            case MOVE:
+
+        }
+
+    }
+
+    public void initGame(){
+        if (turn){
+            changeButtonsState(turn);
+        }else{
+
         }
     }
-    public void activarBotones(){
+    public void changeButtonsState(boolean state){
         for (int i = 0; i < buttons.length ; i++) {
             for (int u = 0; u < buttons[i].length ; u++) {
-                buttons[i][u].setEnabled(true);
+                buttons[i][u].setEnabled(state);
             }
         }
     }
