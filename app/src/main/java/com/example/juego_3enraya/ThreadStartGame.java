@@ -26,10 +26,11 @@ public class ThreadStartGame extends AsyncTask<Void, Void, Boolean> {
 
     MainActivity instance;
 
-    public ThreadStartGame(String ip, int port, MainActivity instance){
+    public ThreadStartGame(String ip, int port, MainActivity instance, Socket cliente){
         this.ip = ip;
         this.port = port;
         this.instance = instance;
+        this.socket = cliente;
     }
 
     /**
@@ -54,32 +55,23 @@ public class ThreadStartGame extends AsyncTask<Void, Void, Boolean> {
     protected Boolean doInBackground(Void... params) {
 
         try {
-            //Se conecta al servidor
-            InetAddress serverAddr = InetAddress.getByName(ip);
-            Log.i("I/TCP Client", ip+ " "+" Connecting...");
-            socket = new Socket(serverAddr, port);
-            Log.i("I/TCP Client", "Connected to server");
-
-            DataInputStream dIn = new DataInputStream(socket.getInputStream());
-            DataOutputStream dOutput = new DataOutputStream(socket.getOutputStream());
-            byte[] message = {0x01};
-            dOutput.writeInt(message.length);//<-----Estoy aquí Byte
-            dOutput.write(message);
-
-            //Answer
-            int lenght = dIn.readInt();
-            if (lenght == 0){
-                Log.i("Mensaje",": " + lenght);
-            }
-            byte[] answer = new byte[lenght];
-            dIn.readFully(answer, 0, message.length);
-            int number = answer[1];
-            Log.i("The answer",": " + number);
-            instance.setTurn(number==1);
-            /*
-            byte[] answer = new byte[];
-            dIn.readFully(message, 0, message.length);
-            */
+            DataInputStream in = new DataInputStream(socket.getInputStream());
+            DataOutputStream out = new DataOutputStream(socket.getOutputStream());
+            //Empezar Partida
+            //Le envío el tamaño del byte para enviar
+            byte[] mensaje = {0x01};
+            out.write(mensaje.length);
+            //Ahora le envío el array/mensaje
+            out.write(mensaje);
+            //Tamaño del array de bytes que espero
+            int tamaño = in.read();
+            Log.i("tamaño : ",""+tamaño);
+            //¿Espero quien empieza?
+            byte[] answer = new byte[tamaño];
+            //lo deposito en answer
+            in.read(answer);
+            int number = answer[0];//Transformamos en número
+            Log.i("respuesta : ",""+number);//<-Estoy aquí, solo tiene un lenght de 1 y no sé que contine
             return true;
 
         }catch (UnknownHostException ex) {

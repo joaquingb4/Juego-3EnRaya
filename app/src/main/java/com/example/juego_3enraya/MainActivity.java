@@ -15,6 +15,8 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.net.Socket;
+
 public class MainActivity extends AppCompatActivity {
     //Attributes
     TextView txtIp;
@@ -28,6 +30,8 @@ public class MainActivity extends AppCompatActivity {
 
     MainActivity instance;
     Boolean turn = false;
+
+    Socket socketS;
 
     //Methods
     public Boolean geTurn(){
@@ -143,7 +147,7 @@ public class MainActivity extends AppCompatActivity {
     public void iniciarPartida(){
         String ip = txtIp.getText().toString();
         int port = Integer.valueOf(txtPort.getText().toString());
-        ThreadStartGame start = new ThreadStartGame(ip, port, instance);
+        ThreadStartGame start = new ThreadStartGame(ip, port, instance, socketS);
         start.execute();
     }
 

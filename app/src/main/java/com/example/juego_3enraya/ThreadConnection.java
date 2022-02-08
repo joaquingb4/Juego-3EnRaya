@@ -9,6 +9,8 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -22,7 +24,7 @@ public class ThreadConnection extends AsyncTask<Void, Void, Boolean> {
 
     String ip;
     int port;
-    Socket socket;
+    Socket socketS;
 
     MainActivity instance;
 
@@ -52,21 +54,18 @@ public class ThreadConnection extends AsyncTask<Void, Void, Boolean> {
 
     @Override
     protected Boolean doInBackground(Void... params) {
+        DataInputStream in;
+        DataOutputStream out;
 
         try {
             //Se conecta al servidor
             InetAddress serverAddr = InetAddress.getByName(ip);
-            Log.i("I/TCP Client", ip+ " "+" Connecting... to " + ip);
-            socket = new Socket(serverAddr, port);
+            Log.i("I/TCP Client", " Connecting... to " + ip);
+            socketS = new Socket(serverAddr, port);
             Log.i("I/TCP Client", "Connected to server");
-            InputStream input = socket.getInputStream();
-            OutputStream output = socket.getOutputStream();
-            //BufferedReader input = new BufferedReader( new InputStreamReader(socket.getInputStream()));
-            //para imprimir datos del servidor
-            //PrintStream output = new PrintStream(socket.getOutputStream());
-            byte[] array = {Byte.parseByte(ip)};
-            output.write(array.length);
-            output.write(array);
+            //Para leer y escribir
+            in = new DataInputStream(socketS.getInputStream());
+            out = new DataOutputStream(socketS.getOutputStream());
             return true;
         }catch (UnknownHostException ex) {
             Log.e("E/TCP Client", "" + ex.getMessage());
@@ -83,6 +82,7 @@ public class ThreadConnection extends AsyncTask<Void, Void, Boolean> {
         Log.i("final","Estoy esperando aquí conn " + resposta);
         if(resposta == true){
             instance.updateUI(CONNECTION_TRUE);
+            instance.socketS = this.socketS;
         }else{
             instance.updateUI(CONNECTION_FALSE);
         }
